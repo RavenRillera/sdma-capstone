@@ -52,15 +52,28 @@ export default function LoginScreen({ onLogin, onGoToSignUp }) {
           <Text style={styles.whiteButtonText}>Sign Up</Text>
         </Pressable>
 
-       <Pressable
-         style={styles.loginButton}
-         onPress={() =>
-       onLogin({
-         fullName: "Paolo Jhay Landicho",
-          role: "student",
-          student_id: "14-14138-745",
-         department: "Information Technology",
-              })
+        <Pressable
+          style={styles.adminButton}
+          onPress={() =>
+            onLogin({
+              fullName: "Sir. Ramon Flores",
+              role: "admin",
+              admin_id: "ADM-001",
+            })
+          }
+        >
+          <Text style={styles.adminButtonText}>Login as Admin</Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.loginButton}
+          onPress={() =>
+            onLogin({
+              fullName: "Paolo Jhay Landicho",
+              role: "student",
+              student_id: "14-14138-745",
+              department: "Information Technology",
+            })
           }
         >
           <Text style={styles.loginButtonText}>Log In</Text>
@@ -176,5 +189,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "bold",
     marginTop: 14,
+  },
+  adminButton: {
+    backgroundColor: "#243B73",
+    alignSelf: "center",
+    borderRadius: 9,
+    paddingVertical: 8,
+    paddingHorizontal: 22,
+    marginTop: 20,
+  },
+
+  adminButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });

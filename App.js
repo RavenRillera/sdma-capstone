@@ -7,6 +7,7 @@ import StudentViolationsScreen from "./screens/StudentViolationsScreen";
 import StudentScannerScreen from "./screens/StudentScannerScreen";
 import StudentHistoryScreen from "./screens/StudentHistoryScreen";
 import StudentProfileScreen from "./screens/StudentProfileScreen";
+import AdminScreen from "./screens/AdminScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -31,6 +32,11 @@ export default function App() {
         onGoToSignUp={() => setScreen("signup")}
       />
     );
+  }
+
+  // If logged in as admin, show admin screen
+  if (user && user.role === "admin") {
+    return <AdminScreen user={user} onLogout={handleLogout} />;
   }
 
   if (screen === "violations") {
