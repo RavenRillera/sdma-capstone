@@ -27,6 +27,20 @@ export const Colors = {
   },
 };
 
+export const AdminPalette = {
+  primary: '#4869D8',
+  primaryDark: '#3D4FC4',
+  accent: '#A5B5EA',
+  badge: '#95A4D7',
+  surface: '#FFFFFF',
+  background: '#E5E5E5',
+  text: '#111827',
+  muted: '#C6D3FF',
+  success: '#10B981',
+  warning: '#F59E0B',
+  danger: '#E53E3E',
+};
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */
