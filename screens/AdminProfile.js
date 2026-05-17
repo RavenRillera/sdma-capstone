@@ -3,20 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   Switch,
 } from "react-native";
 
-export default function AdminProfileScreen({
-  user,
-  onLogout,
-  goHome,
-  goToViolations,
-  goToScanner,
-  goToHistory,
-}) {
+export default function AdminProfileScreen({ user, onLogout }) {
   const fullName = user?.fullName || "Sir. Ramon Flores";
   const initials = fullName
     .split(" ")
@@ -26,296 +18,242 @@ export default function AdminProfileScreen({
     .toUpperCase();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <View style={styles.topRow}>
-            <View>
-              <Text style={styles.appName}>UniDiscipline</Text>
-              <Text style={styles.school}>New Era University</Text>
-            </View>
+    <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
 
-            <Text style={styles.roleBadge}>Administrator</Text>
-
-            <View style={styles.profileCircle}>
-              <Text style={styles.profileText}>{initials}</Text>
+      {/* ── Blue Header ── */}
+      <View style={styles.header}>
+        <View style={styles.topRow}>
+          <View style={styles.titleBlock}>
+            <Text style={styles.appName}>UniDiscipline</Text>
+            <View style={styles.adminBadge}>
+              <Text style={styles.adminBadgeText}>Administrator</Text>
             </View>
           </View>
+          <View style={styles.profileCircle}>
+            <Text style={styles.profileCircleText}>{initials}</Text>
+          </View>
+        </View>
+        <Text style={styles.schoolName}>New Era University</Text>
 
-          <Text style={styles.title}>My Profile</Text>
+        <Text style={styles.pageTitle}>My Profile</Text>
 
-          <View style={styles.studentCard}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{initials}</Text>
-            </View>
-
-            <View>
-              <Text style={styles.studentName}>{fullName}</Text>
-              <Text style={styles.studentId}>{user?.admin_id || "ADM-001"}</Text>
-
-              <View style={styles.studentBadge}>
-                <Text style={styles.studentBadgeText}>Administrator</Text>
-              </View>
+        <View style={styles.identityCard}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{initials}</Text>
+          </View>
+          <View>
+            <Text style={styles.identityName}>{fullName}</Text>
+            <Text style={styles.identityId}>{user?.admin_id || "ADM-001"}</Text>
+            <View style={styles.identityBadge}>
+              <Text style={styles.identityBadgeText}>Administrator</Text>
             </View>
           </View>
         </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>PERSONAL INFORMATION</Text>
-
-          <InfoRow icon="♙" label="Full Name" value={fullName} />
-          <InfoRow icon="✉" label="Email" value={user?.email || "ramon.flores@neu.edu.ph"} />
-          <InfoRow icon="☎" label="Phone" value={user?.phone || "+63 912 345 6789"} />
-          <InfoRow icon="▣" label="Department" value={user?.department || "Engineering"} />
-          <InfoRow icon="▣" label="Position" value={user?.position || "Associate Professor"} last />
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>NOTIFICATION PREFERENCES</Text>
-
-          <SettingRow title="Push Notification" subtitle="Violation update and alerts" />
-          <SettingRow title="Email Alerts" subtitle="Receive emails for case updates" />
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>SETTINGS & HELP</Text>
-
-          <MenuRow icon="▣" title="Change Password" />
-          <MenuRow icon="?" title="Help & FAQ" />
-          <MenuRow icon="◉" title="Privacy Policy" last />
-        </View>
-
-        <TouchableOpacity style={styles.signOutButton} onPress={onLogout}>
-          <Text style={styles.signOutText}>⇱ Sign Out</Text>
-        </TouchableOpacity>
-      </ScrollView>
-
-      <View style={styles.bottomNav}>
-        <NavItem label="Home" onPress={goHome} />
-        <NavItem label="Violations" onPress={goToViolations} />
-        <NavItem label="Scanner" onPress={goToScanner} />
-        <NavItem label="History" onPress={goToHistory} />
-        <NavItem label="Profile" />
       </View>
-    </SafeAreaView>
+
+      {/* ── Personal Information ── */}
+      <View style={styles.card}>
+        <Text style={styles.cardLabel}>PERSONAL INFORMATION</Text>
+        <InfoRow icon="👤" label="Full Name" value={fullName} />
+        <InfoRow icon="✉️" label="Email" value={user?.email || "ramon.flores@neu.edu.ph"} />
+        <InfoRow icon="📞" label="Phone" value={user?.phone || "+63 912 345 6789"} />
+        <InfoRow icon="🏢" label="Department" value={user?.department || "Engineering"} />
+        <InfoRow icon="💼" label="Position" value={user?.position || "Associate Professor"} last />
+      </View>
+
+      {/* ── Notification Preferences ── */}
+      <View style={styles.card}>
+        <Text style={styles.cardLabel}>NOTIFICATION PREFERENCES</Text>
+        <SettingRow icon="🔔" title="Push Notification" subtitle="Violation update and alerts" />
+        <SettingRow icon="✉️" title="Email Alerts" subtitle="Receive emails for case updates" last />
+      </View>
+
+      {/* ── Settings & Help ── */}
+      <View style={styles.card}>
+        <Text style={styles.cardLabel}>SETTINGS & HELP</Text>
+        <MenuRow icon="🔒" title="Change Password" />
+        <MenuRow icon="❓" title="Help & FAQ" />
+        <MenuRow icon="🛡️" title="Privacy Policy" last />
+      </View>
+
+      {/* ── Sign Out ── */}
+      <TouchableOpacity style={styles.signOutButton} onPress={onLogout}>
+        <Text style={styles.signOutText}>↪  Sign Out</Text>
+      </TouchableOpacity>
+
+    </ScrollView>
   );
 }
 
 function InfoRow({ icon, label, value, last }) {
   return (
-    <View style={[styles.infoRow, last && styles.noBorder]}>
-      <View style={styles.smallIcon}>
-        <Text>{icon}</Text>
+    <View style={[styles.row, last && styles.rowLast]}>
+      <View style={styles.rowIcon}>
+        <Text style={styles.rowIconText}>{icon}</Text>
       </View>
-
       <View>
-        <Text style={styles.infoLabel}>{label}</Text>
-        <Text style={styles.infoValue}>{value}</Text>
+        <Text style={styles.rowLabel}>{label}</Text>
+        <Text style={styles.rowValue}>{value}</Text>
       </View>
     </View>
   );
 }
 
-function SettingRow({ title, subtitle }) {
+function SettingRow({ icon, title, subtitle, last }) {
   return (
-    <View style={styles.settingRow}>
-      <View style={styles.smallIcon}>
-        <Text>🔔</Text>
+    <View style={[styles.row, last && styles.rowLast]}>
+      <View style={styles.rowIcon}>
+        <Text style={styles.rowIconText}>{icon}</Text>
       </View>
-
       <View style={{ flex: 1 }}>
-        <Text style={styles.menuTitle}>{title}</Text>
-        <Text style={styles.settingSubtitle}>{subtitle}</Text>
+        <Text style={styles.rowValue}>{title}</Text>
+        <Text style={styles.rowLabel}>{subtitle}</Text>
       </View>
-
-      <Switch value />
+      <Switch value={true} trackColor={{ true: "#4869D8" }} />
     </View>
   );
 }
 
 function MenuRow({ icon, title, last }) {
   return (
-    <TouchableOpacity style={[styles.menuRow, last && styles.noBorder]}>
-      <View style={styles.smallIcon}>
-        <Text>{icon}</Text>
+    <TouchableOpacity style={[styles.row, last && styles.rowLast]}>
+      <View style={styles.rowIcon}>
+        <Text style={styles.rowIconText}>{icon}</Text>
       </View>
-
-      <Text style={styles.menuTitle}>{title}</Text>
-    </TouchableOpacity>
-  );
-}
-
-function NavItem({ label, active, onPress }) {
-  return (
-    <TouchableOpacity style={styles.navItem} onPress={onPress}>
-      <Text style={[styles.navIcon, active && styles.activeNav]}>
-        {label === "Home"
-          ? "⌂"
-          : label === "Violations"
-          ? "ⓘ"
-          : label === "Scanner"
-          ? "⌗"
-          : label === "History"
-          ? "◷"
-          : "♙"}
-      </Text>
-
-      <Text style={[styles.navText, active && styles.activeNav]}>{label}</Text>
+      <Text style={styles.rowValue}>{title}</Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#E5E5E5" },
-  scrollContent: { paddingBottom: 90 },
+  scrollView: { flex: 1 },
+  scrollContent: { paddingBottom: 30 },
 
+  /* Header */
   header: {
     backgroundColor: "#4869D8",
-    paddingHorizontal: 18,
-    paddingTop: 40,
-    paddingBottom: 12,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
-  topRow: { flexDirection: "row", alignItems: "center" },
-  appName: { color: "#FFFFFF", fontSize: 18, fontWeight: "bold" },
-  school: { color: "#DDE5FF", fontSize: 10 },
-  roleBadge: {
-    backgroundColor: "#95A4D7",
-    color: "#FFFFFF",
-    fontSize: 9,
-    fontWeight: "bold",
-    paddingHorizontal: 18,
-    paddingVertical: 4,
-    borderRadius: 10,
-    marginLeft: 10,
-    overflow: "hidden",
+  topRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
+  titleBlock: { flexDirection: "row", alignItems: "center", gap: 8 },
+  appName: { color: "#FFFFFF", fontSize: 18, fontWeight: "800" },
+  adminBadge: {
+    backgroundColor: "rgba(255,255,255,0.25)",
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 12,
+  },
+  adminBadgeText: { color: "#FFFFFF", fontSize: 10, fontWeight: "600" },
   profileCircle: {
-    marginLeft: "auto",
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    borderWidth: 1.5,
-    borderColor: "#FFFFFF",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.25)",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: "rgba(255,255,255,0.6)",
   },
-  profileText: { color: "#FFFFFF", fontWeight: "bold" },
+  profileCircleText: { color: "#FFFFFF", fontWeight: "700", fontSize: 14 },
+  schoolName: { color: "#C6D3FF", fontSize: 11, marginTop: 2 },
 
-  title: {
+  pageTitle: {
     color: "#FFFFFF",
-    fontSize: 34,
-    fontWeight: "bold",
-    marginTop: 48,
+    fontSize: 32,
+    fontWeight: "800",
+    marginTop: 24,
+    marginBottom: 14,
   },
 
-  studentCard: {
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 16,
+  identityCard: {
     flexDirection: "row",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.5)",
+    borderRadius: 16,
+    padding: 14,
   },
   avatar: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: "#A5B5EA",
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: "rgba(255,255,255,0.25)",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
   },
-  avatarText: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
-  studentName: { color: "#FFFFFF", fontSize: 17, fontWeight: "bold" },
-  studentId: { color: "#DDE5FF", fontSize: 12 },
-  studentBadge: {
-    backgroundColor: "#A5B5EA",
-    paddingHorizontal: 15,
+  avatarText: { color: "#FFFFFF", fontSize: 20, fontWeight: "700" },
+  identityName: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
+  identityId: { color: "#C6D3FF", fontSize: 12, marginTop: 2 },
+  identityBadge: {
+    marginTop: 6,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
     paddingVertical: 3,
     borderRadius: 8,
-    marginTop: 6,
-    alignSelf: "flex-start",
   },
-  studentBadgeText: { color: "#FFFFFF", fontSize: 9, fontWeight: "bold" },
+  identityBadgeText: { color: "#FFFFFF", fontSize: 10, fontWeight: "600" },
 
+  /* Cards */
   card: {
     backgroundColor: "#FFFFFF",
-    marginHorizontal: 28,
-    marginTop: 14,
-    borderRadius: 10,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: "#D0D0D0",
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  cardTitle: {
-    color: "#999999",
-    fontSize: 12,
-    marginBottom: 10,
+  cardLabel: {
+    color: "#AAAAAA",
+    fontSize: 11,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    marginBottom: 6,
   },
-  infoRow: {
+
+  /* Rows */
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#DCDCDC",
+    borderBottomColor: "#F0F0F0",
   },
-  smallIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    backgroundColor: "#E5E7EB",
+  rowLast: { borderBottomWidth: 0 },
+  rowIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: "#F3F4F6",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 14,
+    marginRight: 12,
   },
-  infoLabel: { color: "#777777", fontSize: 10 },
-  infoValue: { color: "#000000", fontWeight: "bold", fontSize: 12 },
-  noBorder: { borderBottomWidth: 0 },
+  rowIconText: { fontSize: 15 },
+  rowLabel: { color: "#999999", fontSize: 11 },
+  rowValue: { color: "#111111", fontSize: 13, fontWeight: "600" },
 
-  settingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#DCDCDC",
-  },
-  settingSubtitle: { color: "#999999", fontSize: 10 },
-
-  menuRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#DCDCDC",
-  },
-  menuTitle: { color: "#000000", fontWeight: "bold", fontSize: 12 },
-
+  /* Sign Out */
   signOutButton: {
-    backgroundColor: "#F7C9C9",
-    marginHorizontal: 28,
-    marginTop: 18,
-    borderRadius: 12,
-    paddingVertical: 15,
+    backgroundColor: "#FDE8E8",
+    marginHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 10,
+    borderRadius: 14,
+    paddingVertical: 16,
     alignItems: "center",
   },
-  signOutText: { color: "#FF0000", fontWeight: "bold" },
-
-  bottomNav: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 55,
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderColor: "#DDDDDD",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  navItem: { alignItems: "center" },
-  navIcon: { fontSize: 18, color: "#000000" },
-  navText: { fontSize: 10, color: "#000000" },
-  activeNav: { color: "#405CFF" },
+  signOutText: { color: "#E53E3E", fontWeight: "700", fontSize: 15 },
 });

@@ -8,26 +8,19 @@ import {
   ScrollView,
 } from "react-native";
 
-export default function StudentHistoryScreen({
+export default function StudentViolationsScreen({
   user,
   onLogout,
   goHome,
-  goToViolations,
   goToScanner,
+  goToHistory,
   goToProfile,
 }) {
-  const fullName = user?.fullName || "Paolo";
-
-  const initials = fullName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+
+        {/* ── Header scrolls with everything ── */}
         <View style={styles.header}>
           <View style={styles.topRow}>
             <View>
@@ -38,131 +31,85 @@ export default function StudentHistoryScreen({
             <Text style={styles.roleBadge}>Student</Text>
 
             <TouchableOpacity style={styles.profileCircle} onPress={onLogout}>
-              <Text style={styles.profileText}>{initials}</Text>
+              <Text style={styles.profileText}>PL</Text>
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.pageTitle}>Service History</Text>
+          <Text style={styles.title}>My Violations</Text>
+          <Text style={styles.subtitle}>Track your violation records</Text>
 
-          <Text style={styles.pageSubtitle}>
-            Log community service time-in & time-out
-          </Text>
-
-          <View style={styles.progressCard}>
-            <View style={styles.progressHeader}>
-              <View style={styles.progressIcon}>
-                <Text>🏅</Text>
-              </View>
-
-              <Text style={styles.progressTitle}>
-                Service Progress
-              </Text>
-            </View>
-
-            <View style={styles.hoursRow}>
-              <Text style={styles.hoursText}>0h</Text>
-              <Text style={styles.percentText}>0%</Text>
-            </View>
-
-            <View style={styles.hoursBottom}>
-              <Text style={styles.requiredText}>
-                of 12h required
-              </Text>
-
-              <Text style={styles.leftText}>12h left</Text>
-            </View>
-
-            <View style={styles.progressBackground}>
-              <View style={styles.progressFill} />
-            </View>
+          <View style={styles.statsRow}>
+            <StatBox value="3" label="Total Cases" color="#FF3B30" />
+            <StatBox value="7h" label="Served" color="#F5A623" />
+            <StatBox value="1" label="Pending" color="#6B7FDB" faded />
           </View>
         </View>
 
-        <View style={styles.statsRow}>
-          <StatBox value="3" label="Sessions" color="#FF6B6B" />
-          <StatBox value="0h" label="Completed" color="#8BFF84" />
-          <StatBox value="7h" label="Remaining" color="#FFB347" />
+        {/* ── Filter + Cards ── */}
+        <View style={styles.filterRow}>
+          <Filter label="All" count="3" active />
+          <Filter label="Pending" count="2" />
+          <Filter label="Serving" count="1" />
+          <Filter label="Done" count="0" />
         </View>
 
-        <View style={styles.warningCard}>
-          <Text style={styles.warningIcon}>⚠</Text>
+        <ViolationCard title="Tardiness" date="Apr 20, 2026" hours="3h community service" />
+        <ViolationCard title="Dress Code" date="Apr 15, 2026" hours="2h community service" />
+        <ViolationCard title="Academic Dishonesty" date="Apr 15, 2026" hours="2h community service" pending />
 
-          <View style={{ flex: 1 }}>
-            <Text style={styles.warningTitle}>
-              12h still required
-            </Text>
-
-            <Text style={styles.warningText}>
-              Scan in at an approved service location to log your hours.
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.logsCard}>
-          <Text style={styles.logsTitle}>SERVICE LOGS</Text>
-
-          <ServiceLog
-            place="Library"
-            date="Apr 22, 2026 • 08:02AM • In progress"
-            hours="0h"
-            blue
-          />
-
-          <ServiceLog
-            place="Campus Grounds"
-            date="Apr 22, 2026 • 01:15PM • 06:15PM"
-            hours="1h"
-            green
-          />
-
-          <ServiceLog
-            place="OSA Office"
-            date="Apr 22, 2026 • 08:00AM • In progress"
-            hours="0h"
-            blue
-          />
-        </View>
       </ScrollView>
 
+      {/* ── Bottom nav fixed ── */}
       <View style={styles.bottomNav}>
         <NavItem label="Home" onPress={goHome} />
-        <NavItem label="Violations" onPress={goToViolations} />
+        <NavItem label="Violations" active />
         <NavItem label="Scanner" onPress={goToScanner} />
-        <NavItem label="History" active />
+        <NavItem label="History" onPress={goToHistory} />
         <NavItem label="Profile" onPress={goToProfile} />
       </View>
     </SafeAreaView>
   );
 }
 
-function StatBox({ value, label, color }) {
+function StatBox({ value, label, color, faded }) {
   return (
-    <View style={styles.statBox}>
+    <View style={[styles.statBox, faded && { opacity: 0.35 }]}>
+      <View style={[styles.statIcon, { backgroundColor: color }]}>
+        <Text style={styles.statIconText}>◉</Text>
+      </View>
       <Text style={[styles.statValue, { color }]}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
     </View>
   );
 }
 
-function ServiceLog({ place, date, hours, blue, green }) {
+function Filter({ label, count, active }) {
   return (
-    <View style={styles.logRow}>
-      <View
-        style={[
-          styles.logIcon,
-          blue && { backgroundColor: "#C8D2FF" },
-          green && { backgroundColor: "#C8FFC9" },
-        ]}
-      >
-        <Text>{blue ? "➜" : "✓"}</Text>
-      </View>
+    <TouchableOpacity style={[styles.filterButton, active && styles.activeFilter]}>
+      <Text style={[styles.filterText, active && styles.activeFilterText]}>{label}</Text>
+      <Text style={styles.filterCount}>{count}</Text>
+    </TouchableOpacity>
+  );
+}
 
-      <View style={{ flex: 1 }}>
-        <Text style={styles.logPlace}>{place}</Text>
-        <Text style={styles.logDate}>{date}</Text>
+function ViolationCard({ title, date, hours, pending }) {
+  return (
+    <View style={styles.card}>
+      <View style={styles.cardTop}>
+        <View>
+          <Text style={styles.cardTitle}>{title}</Text>
+          <View style={styles.codeRow}>
+            <Text style={styles.minor}>Minor</Text>
+            <Text style={styles.code}>V-2026-001</Text>
+          </View>
+        </View>
+        {pending && <Text style={styles.pendingBadge}>Pending Review</Text>}
       </View>
-
-      <Text style={styles.logHours}>{hours}</Text>
+      <View style={styles.cardBottom}>
+        <Text style={styles.meta}>▣ {date}</Text>
+        <Text style={styles.meta}>◷ {hours}</Text>
+        {pending && <Text style={styles.arrow}>⌄</Text>}
+      </View>
     </View>
   );
 }
@@ -171,312 +118,146 @@ function NavItem({ label, active, onPress }) {
   return (
     <TouchableOpacity style={styles.navItem} onPress={onPress}>
       <Text style={[styles.navIcon, active && styles.activeNav]}>
-        {label === "Home"
-          ? "⌂"
-          : label === "Violations"
-          ? "ⓘ"
-          : label === "Scanner"
-          ? "⌗"
-          : label === "History"
-          ? "◷"
+        {label === "Home" ? "⌂"
+          : label === "Violations" ? "ⓘ"
+          : label === "Scanner" ? "⌗"
+          : label === "History" ? "◷"
           : "♙"}
       </Text>
-
-      <Text style={[styles.navText, active && styles.activeNav]}>
-        {label}
-      </Text>
+      <Text style={[styles.navText, active && styles.activeNav]}>{label}</Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#E5E5E5",
-  },
+  container: { flex: 1, backgroundColor: "#E5E5E5" },
 
-  scrollContent: {
-    paddingBottom: 90,
-  },
+  // flex: 1 is the key — makes ScrollView fill the remaining space
+  // so the header is part of the scrollable area, not above it
+  scrollView: { flex: 1 },
+  scrollContent: { paddingBottom: 85 },
 
   header: {
-    backgroundColor: "#4869D8",
-    paddingHorizontal: 18,
-    paddingTop: 40,
-    paddingBottom: 20,
-    elevation: 5,
+    backgroundColor: "#345BD4",
+    paddingHorizontal: 22,
+    paddingTop: 42,
+    paddingBottom: 22,
   },
-
-  topRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  appName: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  school: {
-    color: "#DDE5FF",
-    fontSize: 10,
-  },
-
+  topRow: { flexDirection: "row", alignItems: "center" },
+  appName: { color: "#FFFFFF", fontSize: 17, fontWeight: "bold" },
+  school: { color: "#DDE5FF", fontSize: 10 },
   roleBadge: {
-    backgroundColor: "#95A4D7",
+    backgroundColor: "#8494D6",
     color: "#FFFFFF",
     fontSize: 9,
     fontWeight: "bold",
     paddingHorizontal: 18,
     paddingVertical: 4,
     borderRadius: 10,
-    marginLeft: 10,
+    marginLeft: 12,
     overflow: "hidden",
   },
-
   profileCircle: {
     marginLeft: "auto",
     width: 42,
     height: 42,
     borderRadius: 21,
-    borderWidth: 1.5,
-    borderColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  profileText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-  },
-
-  pageTitle: {
-    color: "#FFFFFF",
-    fontSize: 34,
-    fontWeight: "bold",
-    marginTop: 52,
-  },
-
-  pageSubtitle: {
-    color: "#DDE5FF",
-    marginTop: 4,
-    fontSize: 12,
-  },
-
-  progressCard: {
-    marginTop: 18,
-    backgroundColor: "rgba(255,255,255,0.12)",
-    borderRadius: 14,
-    padding: 14,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
-  },
-
-  progressHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  progressIcon: {
-    width: 26,
-    height: 26,
-    borderRadius: 6,
-    backgroundColor: "#FFE27A",
+    borderColor: "rgba(255,255,255,0.35)",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 8,
   },
-
-  progressTitle: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 13,
-  },
-
-  hoursRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 18,
-  },
-
-  hoursText: {
-    color: "#FFFFFF",
-    fontSize: 38,
-    fontWeight: "bold",
-  },
-
-  percentText: {
-    color: "#FFB100",
-    fontSize: 32,
-    fontWeight: "bold",
-  },
-
-  hoursBottom: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  requiredText: {
-    color: "#FFFFFF",
-    fontSize: 11,
-  },
-
-  leftText: {
-    color: "#FFB100",
-    fontSize: 11,
-    fontWeight: "bold",
-  },
-
-  progressBackground: {
-    height: 8,
-    backgroundColor: "#E2E2E2",
-    borderRadius: 10,
-    marginTop: 12,
-  },
-
-  progressFill: {
-    width: "0%",
-    height: 8,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-  },
-
-  statsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 24,
-    marginTop: 22,
-  },
-
+  profileText: { color: "#FFFFFF", fontWeight: "bold" },
+  title: { color: "#FFFFFF", fontSize: 31, fontWeight: "bold", marginTop: 28 },
+  subtitle: { color: "#DDE5FF", fontSize: 12 },
+  statsRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 28 },
   statBox: {
-    width: 104,
-    height: 82,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#D4D4D4",
+    width: "29%",
+    height: 96,
+    borderWidth: 1.2,
+    borderColor: "#FFFFFF",
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },
+  statIcon: { width: 25, height: 25, borderRadius: 6, alignItems: "center", justifyContent: "center" },
+  statIconText: { color: "#FFFFFF" },
+  statValue: { fontSize: 25, fontWeight: "bold", marginTop: 8 },
+  statLabel: { color: "#E8EDFF", fontSize: 13 },
 
-  statValue: {
-    fontSize: 30,
-    fontWeight: "bold",
-  },
-
-  statLabel: {
-    color: "#777777",
-    fontSize: 12,
-    marginTop: 4,
-  },
-
-  warningCard: {
-    backgroundColor: "#F6E8B4",
-    marginHorizontal: 24,
-    marginTop: 18,
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: "#E0C75C",
+  filterRow: {
     flexDirection: "row",
-    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 28,
+    paddingTop: 18,
+    marginBottom: 14,
   },
-
-  warningIcon: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-
-  warningTitle: {
-    color: "#7B5D00",
-    fontWeight: "bold",
-  },
-
-  warningText: {
-    color: "#7B5D00",
-    fontSize: 11,
-    marginTop: 2,
-  },
-
-  logsCard: {
+  filterButton: {
     backgroundColor: "#FFFFFF",
-    marginHorizontal: 24,
-    marginTop: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#D4D4D4",
-    padding: 14,
-  },
-
-  logsTitle: {
-    color: "#999999",
-    fontSize: 12,
-    marginBottom: 10,
-  },
-
-  logRow: {
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
     flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ECECEC",
+    gap: 5,
+  },
+  activeFilter: { backgroundColor: "#17134E" },
+  filterText: { color: "#000000", fontWeight: "bold", fontSize: 12 },
+  activeFilterText: { color: "#FFFFFF" },
+  filterCount: {
+    backgroundColor: "#E6E6E6",
+    color: "#555555",
+    fontSize: 8,
+    paddingHorizontal: 5,
+    borderRadius: 10,
+    overflow: "hidden",
   },
 
-  logIcon: {
-    width: 26,
-    height: 26,
-    borderRadius: 6,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 10,
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 9,
+    padding: 18,
+    marginBottom: 16,
+    marginHorizontal: 28,
+    borderWidth: 1,
+    borderColor: "#C9C9C9",
   },
-
-  logPlace: {
+  cardTop: { flexDirection: "row", justifyContent: "space-between" },
+  cardTitle: { fontSize: 20, fontWeight: "bold", color: "#000000" },
+  codeRow: { flexDirection: "row", gap: 18, marginTop: 6 },
+  minor: { color: "#F59E0B", fontWeight: "bold", fontSize: 11 },
+  code: { color: "#777777", fontSize: 11 },
+  pendingBadge: {
+    color: "#F59E0B",
+    backgroundColor: "#FFF3CD",
+    fontSize: 9,
     fontWeight: "bold",
-    color: "#000000",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    overflow: "hidden",
   },
-
-  logDate: {
-    color: "#777777",
-    fontSize: 11,
-    marginTop: 3,
+  cardBottom: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 26,
+    alignItems: "center",
   },
-
-  logHours: {
-    fontWeight: "bold",
-    color: "#000000",
-  },
+  meta: { color: "#777777", fontSize: 12, fontWeight: "bold" },
+  arrow: { fontSize: 22, color: "#777777" },
 
   bottomNav: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 55,
+    height: 52,
     backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderColor: "#DDDDDD",
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
   },
-
-  navItem: {
-    alignItems: "center",
-  },
-
-  navIcon: {
-    fontSize: 18,
-    color: "#000000",
-  },
-
-  navText: {
-    fontSize: 10,
-    color: "#000000",
-  },
-
-  activeNav: {
-    color: "#405CFF",
-  },
+  navItem: { alignItems: "center" },
+  navIcon: { fontSize: 18, color: "#000000" },
+  navText: { fontSize: 10, color: "#000000" },
+  activeNav: { color: "#4A63FF" },
 });

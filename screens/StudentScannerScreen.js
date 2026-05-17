@@ -5,6 +5,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 
 export default function StudentScannerScreen({
@@ -25,7 +26,8 @@ export default function StudentScannerScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
         <View style={styles.topRow}>
           <View>
             <Text style={styles.appName}>UniDiscipline</Text>
@@ -41,9 +43,9 @@ export default function StudentScannerScreen({
 
         <Text style={styles.title}>QR Scanner</Text>
         <Text style={styles.subtitle}>Scan your community service QR code</Text>
-      </View>
+        </View>
 
-      <View style={styles.content}>
+        <View style={styles.content}>
         <View style={styles.scannerBox}>
           <View style={styles.cornerTopLeft} />
           <View style={styles.cornerTopRight} />
@@ -68,7 +70,8 @@ export default function StudentScannerScreen({
             service hours.
           </Text>
         </View>
-      </View>
+        </View>
+      </ScrollView>
 
       <View style={styles.bottomNav}>
         <NavItem label="Home" onPress={goHome} />
@@ -168,6 +171,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingTop: 35,
   },
+  scrollContent: { paddingBottom: 100 },
   scannerBox: {
     height: 300,
     backgroundColor: "#FFFFFF",
